@@ -82,7 +82,7 @@ export default function Menu() {
               src="/assets/arrowUp.svg"
               alt=""
               width={20}
-              height={120}
+              height={20}
               priority
             />
           </div>
