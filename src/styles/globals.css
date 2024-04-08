@@ -16,18 +16,70 @@
   }
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: "Helvetica Neue", sans-serif;
+  background-color: #fff;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
+html {
+  height: -webkit-fill-available;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.link-no-highlight {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input.react-dropdown-select-input::placeholder {
+  font-size: 18px;
+}
+
+div.react-dropdown-select {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+span.react-dropdown-select-item {
+  border-bottom: 1px solid black;
+  padding: 12px;
+}
+
+span.react-dropdown-select-item:last-child {
+  border-bottom: none;
+}
+
+div.react-dropdown-select-dropdown {
+  border: 1px solid black;
+}
+
+span.react-dropdown-select-option {
+  background: none;
+  border: 0.5px solid rgba(0, 0, 0, 0.5);
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+span.react-dropdown-select-option-label {
+  color: black;
+}
+
+span.react-dropdown-select-option-remove {
+  color: black;
+}
+
+div.react-dropdown-select-content {
+  overflow-y: scroll;
 }

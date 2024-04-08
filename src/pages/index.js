@@ -1,118 +1,277 @@
+"use client";
+import Head from "next/head";
+import Link from "next/link";
 import Image from "next/image";
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
+import { events } from "@/queries/auth";
+import { useState, useEffect } from "react";
+import moment from "moment";
 
 export default function Home() {
+  const [eventsList, setEventsList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [currentTitle, setCurrentTitle] = useState("");
+
+  const currentMoment = moment(moment().format("YYYY-MM-DD"));
+
+  useEffect(() => {
+    const fetchData = async (data) => {
+      try {
+        setLoading(true);
+        const res = await events(data);
+        setEventsList(res);
+        console.log(res);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  function getDefaultDate() {
+    const event = eventsList[0];
+    if (event) {
+      const StartDate = getDate(event.StartDate);
+      const EndDate = getDate(event.EndDate);
+      if (StartDate === EndDate) {
+        setCurrentTitle(StartDate);
+      } else setCurrentTitle(`${StartDate} - ${EndDate}`);
+    }
+  }
+
+  useEffect(() => {
+    getDefaultDate();
+  }, [eventsList]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const elements = eventsList.map((item, index) => {
+        const element = document.getElementById(item.ID);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          return {
+            index,
+            inView: rect.top >= 0 && rect.bottom <= window.innerHeight,
+          };
+        } else {
+          return {
+            index,
+            inView: false,
+          };
+        }
+      });
+
+      const inViewElement = elements.find((item) => item.inView);
+
+      if (inViewElement !== undefined) {
+        setActiveIndex(inViewElement.index);
+        const StartDate = getDate(eventsList[inViewElement.index].StartDate);
+        const EndDate = getDate(eventsList[inViewElement.index].EndDate);
+        if (StartDate === EndDate) {
+          setCurrentTitle(StartDate);
+        } else setCurrentTitle(`${StartDate} - ${EndDate}`);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [eventsList]);
+
+  function sortedEventsList(events) {
+    const currentTimestamp = Date.now();
+
+    function compareStartDate(eventA, eventB) {
+      const startDateA = new Date(eventA.startDate);
+      const startDateB = new Date(eventB.startDate);
+
+      if (startDateA < currentTimestamp) {
+        return 1;
+      } else if (startDateB < currentTimestamp) {
+        return -1;
+      } else {
+        return startDateA - startDateB;
+      }
+    }
+
+    const sortedEvents = events.sort(compareStartDate);
+    return sortedEvents;
+  }
+
+  const sortedEvents = sortedEventsList(eventsList);
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main className="w-full h-full py-[10px] lg:py-[20px]">
+      <Head>
+        <title>Friends of 16</title>
+        <link
+          rel="icon"
+          type="image/svg"
+          href="/assets/Logo.svg"
+          sizes="16x16"
+        />
+        <meta name="title" content="Friends of 16" />
+        <meta
+          name="description"
+          content="16/16 is a serene space for intimate experiences designed to attract and serve creatives"
+        />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://friendsof16.vercel.app/" />
+        <meta property="og:title" content="Friends of 16" />
+        <meta
+          property="og:description"
+          content="16/16 is a serene space for intimate experiences designed to attract and serve creatives"
+        />
+        <meta
+          property="og:image"
+          content="https://friendsof16.vercel.app/assets/SEOImage.png"
+        />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta
+          property="twitter:url"
+          content="https://friendsof16.vercel.app/"
+        />
+        <meta property="twitter:title" content="Friends of 16" />
+        <meta
+          property="twitter:description"
+          content="16/16 is a serene space for intimate experiences designed to attract and serve creatives"
+        />
+        <meta
+          property="twitter:image"
+          content="https://friendsof16.vercel.app/assets/SEOImage.png"
+        />
+      </Head>
+      <div className="w-full fixed top-0 flex justify-between items-center py-[15px] lg:pb-0 lg:pt-[30px] px-[24px] lg:px-[96px] bg-white z-50">
+        <p className="font-bold text-[18px] lg:text-[24px]">16/16</p>
+        <Link href="/" className="font-normal text-[18px] lg:text-[24px]">
+          Menu
+        </Link>
+      </div>
+      <div className="w-full h-[100dvh] py-[50px] lg:py-[100px] flex flex-col justify-end items-center gap-[22dvh] lg:gap-[18vh]">
+        <Image
+          src="/assets/gif.gif"
+          alt=""
+          width={100}
+          height={100}
+          priority
+          unoptimized
+          className="w-[100px] lg:w-[150px]"
+        />
+        <div className="flex flex-col items-center gap-10 lg:gap-20">
+          <p className="text-[18px] lg:text-[24px] text-center px-[32px]">
+            {" "}
+            16/16 is a serene space for
+            <br /> intimate experiences designed
+            <br /> to attract and serve creatives
+          </p>
+          <Image
+            src="/assets/chevron-down.svg"
+            alt=""
+            width={20}
+            height={20}
+            priority
+          />
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div className="bg-white sticky justify-center w-full top-4 lg:top-10 pt-[10px] lg:pt-[5px] px-[24px] lg:px-[96px] z-40">
+        <div className="w-full flex justify-between items-center mt-[40px]">
+          <p className="font-bold text-[18px] lg:text-[24px]">Calendar</p>
+          <p className="font-normal text-[18px] lg:text-[24px]">
+            {currentTitle}
+          </p>
+        </div>
+        <hr className="mt-[20px] opacity-30" />
       </div>
+      {loading ? (
+        <div className="w-full text-center p-[40px]">
+          <div className="font-normal text-[18px] lg:text-[24px]">
+            Loading...
+          </div>
+        </div>
+      ) : eventsList.length === 0 ? (
+        <div className="w-full text-center p-[40px]">
+          <div className="font-normal text-[18px] lg:text-[24px]">
+            No events available
+          </div>
+        </div>
+      ) : (
+        sortedEvents.map((event, index) => (
+          <div
+            className="mt-[30px] lg:mt-[60px] lg:w-[600px] px-[24px] lg:px-0 flex flex-col gap-4 lg:gap-4 pb-[20px] lg:pb-0 lg:mx-auto"
+            key={index}
+            id={event.ID}
+          >
+            <p className="font-bold text-[18px] lg:text-[24px]">{event.Name}</p>
+            <img
+              src={event.Poster[0].url}
+              alt=""
+              style={{ position: "relative" }}
+              fill="true"
+              priority="true"
+            />
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+            {currentMoment.isSameOrBefore(event.EndDate)}
+            {event.RSVP === true && currentMoment.isAfter(event.EndDate) ? (
+              <Link
+                href={`/event/${event.ID}`}
+                className="w-full h-[66px] border border-[#0a0a0a] bg-white text-[#0A0A0A] text-[18px] lg:text-[24px] font-bold flex justify-center items-center"
+              >
+                RSVP
+              </Link>
+            ) : currentMoment.isSameOrBefore(event.EndDate) ? (
+              <div className="w-full h-[66px] border border-[#FF3131] text-[#FF3131] text-[18px] lg:text-[24px] font-bold flex justify-center items-center">
+                Closed
+              </div>
+            ) : (
+              <div className="w-full h-[66px] border border-[#e1e1e1] text-[#bebebe] text-[18px] lg:text-[24px] font-bold flex justify-center items-center">
+                Sold out
+              </div>
+            )}
+          </div>
+        ))
+      )}
     </main>
   );
 }
+
+function getDate(dateString) {
+  if (!dateString) return;
+  const dateObject = new Date(dateString);
+  const todayObject = new Date();
+  const dayIndex = dateObject.getDay();
+  const date = dateObject.getDate();
+  const monthIndex = dateObject.getMonth();
+  const month = MONTHS[monthIndex];
+  const day = DAYS[dayIndex];
+  if (
+    date === todayObject.getDate() &&
+    monthIndex === todayObject.getMonth() &&
+    dateObject.getFullYear() === todayObject.getFullYear()
+  ) {
+    return "Today";
+  }
+  return `${day}, ${month} ${date}`;
+}
+
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
