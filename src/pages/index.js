@@ -152,7 +152,7 @@ export default function Home() {
       </Head>
       <div className="w-full fixed top-0 flex justify-between items-center py-[15px] lg:pb-0 lg:pt-[30px] px-[24px] lg:px-[96px] bg-white z-50">
         <p className="font-bold text-[18px] lg:text-[24px]">16/16</p>
-        <Link href="/" className="font-normal text-[18px] lg:text-[24px]">
+        <Link href="/menu" className="font-normal text-[18px] lg:text-[24px]">
           Menu
         </Link>
       </div>
