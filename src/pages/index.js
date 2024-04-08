@@ -121,7 +121,10 @@ export default function Home() {
         />
 
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://friendsof16.vercel.app/" />
+        <meta
+          property="og:url"
+          content="https://friendsof16-demo.vercel.app/"
+        />
         <meta property="og:title" content="Friends of 16" />
         <meta
           property="og:description"
@@ -129,13 +132,13 @@ export default function Home() {
         />
         <meta
           property="og:image"
-          content="https://friendsof16.vercel.app/assets/SEOImage.png"
+          content="https://friendsof16-demo.vercel.app/assets/SEOImage.png"
         />
 
         <meta property="twitter:card" content="summary_large_image" />
         <meta
           property="twitter:url"
-          content="https://friendsof16.vercel.app/"
+          content="https://friendsof16-demo.vercel.app/"
         />
         <meta property="twitter:title" content="Friends of 16" />
         <meta
@@ -144,7 +147,7 @@ export default function Home() {
         />
         <meta
           property="twitter:image"
-          content="https://friendsof16.vercel.app/assets/SEOImage.png"
+          content="https://friendsof16-demo.vercel.app/assets/SEOImage.png"
         />
       </Head>
       <div className="w-full fixed top-0 flex justify-between items-center py-[15px] lg:pb-0 lg:pt-[30px] px-[24px] lg:px-[96px] bg-white z-50">
