@@ -7,6 +7,47 @@ export default function About() {
     <div className="w-full h-full py-[10px] lg:py-[20px]">
       <Head>
         <title>About Friends of 16</title>
+        <link
+          rel="icon"
+          type="image/svg"
+          href="/assets/Logo.svg"
+          sizes="16x16"
+        />
+        <meta name="title" content="Friends of 16" />
+        <meta
+          name="description"
+          content="16/16 is a serene space for intimate experiences designed to attract and serve creatives"
+        />
+
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:url"
+          content="https://friendsof16-demo.vercel.app/"
+        />
+        <meta property="og:title" content="Friends of 16" />
+        <meta
+          property="og:description"
+          content="16/16 is a serene space for intimate experiences designed to attract and serve creatives"
+        />
+        <meta
+          property="og:image"
+          content="https://friendsof16-demo.vercel.app/assets/about.jpg"
+        />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta
+          property="twitter:url"
+          content="https://friendsof16-demo.vercel.app/"
+        />
+        <meta property="twitter:title" content="Friends of 16" />
+        <meta
+          property="twitter:description"
+          content="16/16 is a serene space for intimate experiences designed to attract and serve creatives"
+        />
+        <meta
+          property="twitter:image"
+          content="https://friendsof16-demo.vercel.app/assets/about.jpg"
+        />
       </Head>
       <div className="w-full fixed top-0 flex justify-between items-center py-[15px] lg:pb-0 lg:pt-[30px] px-[24px] lg:px-[96px] bg-white z-10">
         <p className="font-bold text-[18px] lg:text-[24px]">16/16</p>
